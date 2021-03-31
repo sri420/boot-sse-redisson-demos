@@ -10,10 +10,12 @@ import org.springframework.cache.annotation.EnableCaching;
 
 @EnableCaching
 @SpringBootApplication
-public class BootSSERedisApplication  { 
+public class BootSSERedissonApplication  { 
     public static void main(String[] args) {
-        SpringApplication.run(BootSSERedisApplication.class, args);
+        SpringApplication.run(BootSSERedissonApplication.class, args);
 }
+
+
     
     
     
