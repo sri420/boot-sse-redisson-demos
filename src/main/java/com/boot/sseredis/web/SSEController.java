@@ -40,11 +40,7 @@ public class SSEController {
 		try {
 			
 			sseEmitter.send(SseEmitter.event().name("INIT"));
-
-			log.info("Before Call to  save...");	
 			sseRedisService.save(userId,sseEmitter);
-			log.info("After Call to  save...");	
-			
 			log.info("OBJ:" + sseEmitter);
 			log.info("OBJ toString: "+ sseEmitter.toString());
 			
@@ -62,15 +58,11 @@ public class SSEController {
 	//Method to Dispatch events to connected Clients
 	@PostMapping(value="dispatchEvent")
 	public void dispatchEventsToAllClients(@RequestParam String event,@RequestParam String userId) {
-
 			try {
-				
 				SSEInfo sseEmitter=(SSEInfo) sseRedisService.findById(userId);		
 				log.info("fetched from redis:" + sseEmitter);
-				log.info("Before Sending Event to clients...");
 				sseEmitter.send(SseEmitter.event().name("event").data(event));
 				log.info("After Sending message Event to clients...");
-				
 			} catch (IOException e) {
 				e.printStackTrace();
 				sseRedisService.deleteById(userId);
