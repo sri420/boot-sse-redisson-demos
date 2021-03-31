@@ -1,4 +1,4 @@
-package com.programmerfriend.ultimateredis.config;
+package com.boot.sseredis.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import com.boot.sseredis.model.SSEInfo;
 
 @Configuration
 @EnableConfigurationProperties(CacheConfigurationProperties.class)
@@ -39,8 +40,8 @@ public class CacheConfig extends CachingConfigurerSupport {
     }
 
     @Bean
-    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory cf) {
-        RedisTemplate<String, String> redisTemplate = new RedisTemplate<String, String>();
+    public RedisTemplate<String, SSEInfo> redisTemplate(RedisConnectionFactory cf) {
+        RedisTemplate<String, SSEInfo> redisTemplate = new RedisTemplate<String, SSEInfo>();
         redisTemplate.setConnectionFactory(cf);
         return redisTemplate;
     }

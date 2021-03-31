@@ -1,4 +1,4 @@
-package com.programmerfriend.ultimateredis.config;
+package com.boot.sseredis.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
