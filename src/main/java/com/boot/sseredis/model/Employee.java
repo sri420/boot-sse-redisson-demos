@@ -14,11 +14,8 @@ import lombok.Getter;
 @Data
 public class Employee implements Serializable {
 
-
 @Setter @Getter public String empno;
 @Setter @Getter public String empname;
 @Setter @Getter public float salary;
-
-
 
 }

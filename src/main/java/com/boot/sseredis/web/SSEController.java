@@ -1,7 +1,7 @@
 package com.boot.sseredis.web;
 
 import java.io.IOException;
-
+import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,44 +24,64 @@ import com.boot.sseredis.util.CacheUtil;
 @Slf4j
 public class SSEController {
 
+private void sendInitEvent(SSEInfo sseInfo) {
+		log.info("Entering sendInitEvent..");
+		try {
+				log.info("Sending INIT Message...");
+				sseInfo.send(SseEmitter.event().name("INIT"));
+		}catch(IOException ioe) {
+			ioe.printStackTrace();
+		}
+		
+	}
+
+
 //Method for Client Subscription
 @CrossOrigin
 @RequestMapping(value="sse/subscribe/{userId}", consumes=MediaType.ALL_VALUE)
 public SSEInfo subscribe(@PathVariable("userId") String userId) {
 	SSEInfo sseEmitter=new SSEInfo(Long.MAX_VALUE);
+
 	RMap<String, SSEInfo> map = CacheUtil.getCacheClient().getMap("sseEmitterMap");		
 
-	try {
-		sseEmitter.send(SseEmitter.event().name("INIT"));
-		map.put(userId,sseEmitter);
-		log.info("OBJ:" + sseEmitter);
-		log.info("OBJ toString: "+ sseEmitter.toString());
-	}catch(IOException e) {
-		e.printStackTrace();
-	}
-
-	sseEmitter.onCompletion( () -> map.remove(userId));
-	map.put(userId,sseEmitter);
+	SSEInfo sseInfo=new SSEInfo(Long.MAX_VALUE);
+	log.info("Sending InitEvent to Client..");
+	sendInitEvent(sseInfo);
+	log.info("Adding sseInfo Object to map..");
+	map.put(userId, sseInfo);
+	sseInfo.onCompletion( () -> map.remove(userId));
+	sseInfo.onTimeout( () -> map.remove(userId));
+	sseInfo.onError( (e) -> map.remove(userId));
+	log.info("Returning from subscribe..");
 	return sseEmitter;
 }
-	
-	
-	
+
 //Method to Dispatch events to connected Clients
 @PostMapping(value="sse/dispatchEvent")
-public void dispatchEventsToAllClients(@RequestParam String event,@RequestParam String userId) {
+public void dispatchEventsToAllClients(@RequestParam String eventName,String eventValue) {
 RMap<String, SSEInfo> map = CacheUtil.getCacheClient().getMap("sseEmitterMap");		
-
-	try {
-		SSEInfo sseEmitter=(SSEInfo) map.get(userId);
-		log.info("fetched from redis:" + sseEmitter);
-		sseEmitter.send(SseEmitter.event().name("event").data(event));
-		log.info("After Sending message Event to clients...");
-	} catch (IOException e) {
-		e.printStackTrace();
-		map.remove(userId);
-	}
+for (Map.Entry<String, SSEInfo> entry : map.entrySet()) {
+		        
+log.info("userId:{}, sseInfo:{}",entry.getKey(),entry.getValue());
+		        
+    try {
+	        	log.info("Fetching sseInfo Object from map..");
+	        	SSEInfo sseInfo=entry.getValue();
+	        	log.info("Fetched sseInfo Object from map..");
+	        	if(null==sseInfo) {
+			   		log.info("Fetched sseInfo Object is NULL");
+			    }
+			    log.info("Sending Message to Client,{}",entry.getKey());
+			    sseInfo.send(SseEmitter.event().name(eventName).data(eventValue));
+			    log.info("Sent message to Client, userId :{}",entry.getKey());
+			        	
+				}catch (IOException e) {
+					e.printStackTrace();
+					map.remove(entry.getKey());
+				}
+		    }
 }
+
 
 
 }
