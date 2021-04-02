@@ -1,0 +1,55 @@
+<html>
+    <head>
+        <title> Demo Real Time Events </title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    </head>
+    <style>
+
+
+    </style>
+
+    <script>
+        $(document).ready(function() {
+
+            var userID=Math.floor((Math.random() * 1000 ) * 1 );
+            console.log('UserID is:' + userID);
+           // var url='http://localhost:8080/subscribe/' + userID;
+            var url='sse/subscribe/' + userID;
+            var eventSource=new EventSource(url);
+
+            eventSource.addEventListener("latestNews", function(event) {
+                console.log(event.data)
+            })
+
+            eventSource.addEventListener("commissionNews", function(event) {
+                console.log("CommissionNews:" + event.data)
+            })
+
+            eventSource.addEventListener("renewalNews", function(event) {
+                console.log("renewalNews:" + event.data)
+            })
+
+            eventSource.addEventListener("error", function(event) {
+                
+                console.log("Error:" + event.currentTarget.readyState)
+                if(event.currentTarget.readyState == EventSource.CLOSED){
+
+                }else{
+                        eventSource.close();
+                }
+                
+                
+            })
+            window.onbeforeunload = function() {
+                eventSource.close();
+            }
+
+
+
+        })
+    </script>
+
+</html>

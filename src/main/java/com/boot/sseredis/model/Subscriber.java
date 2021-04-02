@@ -6,11 +6,23 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.Serializable;
+import lombok.Data;
 
-public class SSEInfo extends SseEmitter implements Serializable {
 
-public SSEInfo(Long timeout) {
+@Data
+public class Subscriber extends SseEmitter implements Serializable {
+
+public Subscriber(Long timeout) {
     super(timeout);
 }
 
+String userId;
+
+public String getUserId(){
+    return userId;
+}
+
+public void setUserId(String userId){
+    this.userId=userId;
+}
 }

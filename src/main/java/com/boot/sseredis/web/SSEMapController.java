@@ -24,7 +24,6 @@ import java.util.Map;
 @Slf4j
 public class SSEMapController {
 	
-	//public List<SseEmitter> emitters=new CopyOnWriteArrayList<>();
 	public Map<String, SseEmitter> emitters=new HashMap<>();
 			
 	
@@ -48,12 +47,13 @@ public class SSEMapController {
 		SseEmitter sseEmitter=new SseEmitter(Long.MAX_VALUE);
 		log.info("Sending InitEvent to Client..");
 		sendInitEvent(sseEmitter);
-		log.info("Adding sseEmitter Object to map..");
-		emitters.put(userID, sseEmitter);
 		sseEmitter.onCompletion( () -> emitters.remove(sseEmitter));
 		sseEmitter.onTimeout( () -> emitters.remove(sseEmitter));
 		sseEmitter.onError( (e) -> emitters.remove(sseEmitter));
 		log.info("Returning from subscribe..");
+		log.info("Adding sseEmitter Object to map..");
+		emitters.put(userID, sseEmitter);
+
 		return sseEmitter;
 	}
 	

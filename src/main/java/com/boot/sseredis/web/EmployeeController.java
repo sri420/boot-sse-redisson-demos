@@ -27,6 +27,8 @@ public class EmployeeController {
 @PostMapping(value="employee", consumes=MediaType.ALL_VALUE)
 public Employee addEmployee(@RequestBody Employee emp) {
 	RMap<String, Employee> empMap = CacheUtil.getCacheClient().getMap("employeeMap");		
+	log.info("Before Adding To Redis: Employee emp:{}",emp);
+	log.info("Before Adding To Redis: Employee emp:{}",emp.toString());
 	empMap.put(emp.getEmpno(),emp);
 	return emp;
 }
@@ -40,7 +42,9 @@ public RMap<String, Employee> getEmployees() {
 @GetMapping(value="employee/{empno}", consumes=MediaType.ALL_VALUE)
 public Employee getEmployeeById(@PathVariable String empno) {
 	RMap<String, Employee> empMap = CacheUtil.getCacheClient().getMap("employeeMap");		
-	return empMap.get(empno);
+	Employee emp=empMap.get(empno);
+	log.info("Employee Object, After Fetching from Redis:{}",emp);
+	return emp;
 }
 
 }
