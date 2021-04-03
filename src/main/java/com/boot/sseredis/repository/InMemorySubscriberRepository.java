@@ -32,7 +32,7 @@ public class InMemorySubscriberRepository implements SubscriberRepository {
     }
 
     @Override
-    public Optional<Subscriber> get(String userId) {
-        return Optional.ofNullable(subscriberMap.get(userId));
+    public Subscriber get(String userId) {
+        return subscriberMap.get(userId);
     }
 }

@@ -11,5 +11,5 @@ public interface SubscriberRepository {
 
     void remove(String userId);
 
-    Optional<Subscriber> get(String userId);
+    Subscriber get(String userId);
 }

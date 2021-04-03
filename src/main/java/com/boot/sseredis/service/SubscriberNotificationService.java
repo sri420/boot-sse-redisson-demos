@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import com.boot.sseredis.mapper.EventMapper;
+import com.boot.sseredis.model.Subscriber;
 import com.boot.sseredis.model.EventDto;
 import com.boot.sseredis.repository.SubscriberRepository;
 
@@ -29,7 +30,8 @@ public class SubscriberNotificationService implements NotificationService {
     }
 
     private void doSendNotification(String userId, EventDto event) {
-        subscriberRepository.get(userId).ifPresentOrElse(subscriber -> {
+        Subscriber subscriber =subscriberRepository.get(userId);
+        if(null!=subscriber){
             try {
                 log.debug("Sending event: {} for user: {}", event, userId);
                 subscriber.send(eventMapper.toSseEventBuilder(event));
@@ -37,7 +39,18 @@ public class SubscriberNotificationService implements NotificationService {
                 log.debug("Error while sending event: {} for subscriber: {} - exception: {}", event, userId, e);
                 subscriberRepository.remove(userId);
             }
-        }, () -> log.debug("No subscriber for userId {}", userId));
+        }else{
+            log.debug("No subscriber for userId {}", userId);
+        }
+        /*subscriberRepository.get(userId).ifPresentOrElse(subscriber -> {
+            try {
+                log.debug("Sending event: {} for user: {}", event, userId);
+                subscriber.send(eventMapper.toSseEventBuilder(event));
+            } catch (IOException | IllegalStateException e) {
+                log.debug("Error while sending event: {} for subscriber: {} - exception: {}", event, userId, e);
+                subscriberRepository.remove(userId);
+            }
+        }, () -> log.debug("No subscriber for userId {}", userId));*/
     }
 
 }
