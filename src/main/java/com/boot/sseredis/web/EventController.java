@@ -21,14 +21,14 @@ public class EventController {
 
     @GetMapping(value="events/{userId}")
     public Subscriber subscribeToEvents(@PathVariable("userId") String userId) {
-        log.debug("Subscribing user with id {}", userId);
+        log.info("Subscribing user with id {}", userId);
         return subscriberService.createSubsriber(userId);
     }
 
     @PostMapping(value="events/{userId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void publishEvent(@PathVariable("userId") String userId, @RequestBody EventDto event) {
-        log.debug("Publishing event {} for user with id {}", event, userId);
+        log.info("Publishing event {} for user with id {}", event, userId);
         notificationService.sendNotification(userId, event);
     }
 }

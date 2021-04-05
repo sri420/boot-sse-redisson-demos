@@ -13,5 +13,5 @@ import java.util.Map;
 @NoArgsConstructor
 public class EventDto implements Serializable {
     private String type;
-    private Map<String, Object> body;
+    private String body;
 }

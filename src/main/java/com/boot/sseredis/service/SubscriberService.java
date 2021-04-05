@@ -20,6 +20,8 @@ public class SubscriberService {
     }
 
     public Subscriber createSubsriber(String userId) {
+        
+        log.info("Entering createSubscriber...");
         Subscriber subscriber = new Subscriber(eventsTimeout);
         subscriber.onCompletion(() -> subscriberRepository.remove(userId));
         subscriber.onTimeout(() -> subscriberRepository.remove(userId));
@@ -27,6 +29,8 @@ public class SubscriberService {
             log.error("Create Subscriber exception", e);
             subscriberRepository.remove(userId);
         });
+        
+        log.info("Calling addReplaceSubscrinet..");
         subscriberRepository.addOrReplaceSubscriber(userId, subscriber);
         return subscriber;
     }
