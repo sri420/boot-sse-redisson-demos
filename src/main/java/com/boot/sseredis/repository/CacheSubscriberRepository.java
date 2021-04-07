@@ -8,28 +8,33 @@ import com.boot.sseredis.model.Subscriber;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import org.redisson.api.RMap;
+import com.boot.sseredis.util.CacheUtil;
 import org.springframework.context.annotation.Profile;
 
-@Profile("memory")
+
+@Profile("cache")
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class InMemorySubscriberRepository implements SubscriberRepository {
+public class CacheSubscriberRepository implements SubscriberRepository {
 
-    private Map<String, Subscriber> subscriberMap = new ConcurrentHashMap<>();
+
+    RMap<String, Subscriber> subscriberMap = CacheUtil.getCacheClient().getMap("subscriberMap");		
 
     @Override
     public void addOrReplaceSubscriber(String userId, Subscriber subscriber) {
+        log.info("Adding Subscriber : {}", subscriber);
         subscriberMap.put(userId, subscriber);
     }
 
     @Override
     public void remove(String userId) {
         if (subscriberMap != null && subscriberMap.containsKey(userId)) {
-            log.debug("Removing subscriber for user: {}", userId);
+            log.info("Removing subscriber for user: {}", userId);
             subscriberMap.remove(userId);
         } else {
-            log.debug("No subscriber to remove for user: {}", userId);
+            log.info("No subscriber to remove for user: {}", userId);
         }
     }
 

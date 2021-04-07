@@ -22,7 +22,9 @@ public class SubscriberService {
     public Subscriber createSubsriber(String userId) {
         
         log.info("Entering createSubscriber...");
-        Subscriber subscriber = new Subscriber(eventsTimeout);
+        log.info("Received userId: {}",userId);
+        Subscriber subscriber = new Subscriber(Long.MAX_VALUE);//eventsTimeout);
+        subscriber.setUserId(userId);
         subscriber.onCompletion(() -> subscriberRepository.remove(userId));
         subscriber.onTimeout(() -> subscriberRepository.remove(userId));
         subscriber.onError(e -> {
@@ -30,7 +32,8 @@ public class SubscriberService {
             subscriberRepository.remove(userId);
         });
         
-        log.info("Calling addReplaceSubscrinet..");
+        log.info("Calling addReplaceSubscriber..");
+        log.info("saving Subscriber Object : {}",subscriber);
         subscriberRepository.addOrReplaceSubscriber(userId, subscriber);
         return subscriber;
     }
